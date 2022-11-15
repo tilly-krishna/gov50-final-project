@@ -31,7 +31,7 @@ white_holc_plot <- redlining |>
   geom_boxplot() +
   labs(x = "HOLC Grade",
        y = "Percentage of Population that is White")
-white_holc_plot
+
 
 black_holc_plot <- redlining |>
   ggplot(aes(x = holc_grade,
@@ -39,6 +39,8 @@ black_holc_plot <- redlining |>
   geom_boxplot() +
   labs(x = "HOLC Grade",
        y = "Percentage of Population that is Black")
+
+white_holc_plot
 black_holc_plot
 
 ```
