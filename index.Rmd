@@ -41,15 +41,9 @@ black_holc_plot <- redlining |>
 
 black_holc_plot
 
-png("white_holc_plot.png")
-myplot <- ggplot(mtcars, aes(wt, mpg)) + geom_point()
-print(myplot)
-dev.off()
 
-png("black_holc_plot.png")
-myplot <- ggplot(mtcars, aes(wt, mpg)) + geom_point()
-print(myplot)
-dev.off()
+
+
 
 ```
 
