@@ -6,58 +6,129 @@ output:
   distill::distill_article:
     self_contained: false
 ---
+Introduction:
 
-## Milestone #1 - Project thoughts
+Does the history of redlining in the 1930s in metropolitan areas have an impact on the racial composition of those same areas today (2020)? Specifically, does a lower HOLC grade (C or D) in the 1930s mean that area will have a higher percentage of Black people living there now compared to the percentage of Black people living in an area now that used to be designated as an A-grade zone? In this study I plan to examine to what extent HOLC grades during the redlining era have a legacy in terms of the racial composition of specific areas today.
 
-I am interested in exploring data related to voting patterns and policing. I think it would be interesting to look at election results in states with a lot of gerrymandering and see if there are any patterns/relationships that can be found in terms of which parties historically win wide. Another thing I'd be interested in exploring is patterns of the school to prison pipeline in schools that are over-policed, and whether or not there is evidence of racial discrimination here as well.
+I hypothesize that there is a relationship between whether a metropolitan area had been redlined and their current racial composition. I expect that areas with lower HOLC grades will have a higher percentage of Black people now compared to that of areas with an A grade. The history of redlining is that homeowners associations would give certain neighborhoods rankings — A’s were most frequently given to affluent white neighborhoods, and D’s were most often assigned to neighborhoods with more Black people. These rankings had a large impact on housing prices and consequently many “better” neighborhoods were not accessible to Black families who were just beginning to have the ability to purchase their own house etc. I expect that the inability to break into these “better” neighborhoods with better resources and schools etc, contributed to the lack of upward mobility for Black families which confined them to the same areas/neighborhoods over time. 
 
+This research question is interesting because theoretically, when segregation/ housing discrimination was outlawed with the Fair Housing Act in 1968, neighborhoods should’ve become less homogeneous in terms of race. Further, with time, the demographic concentrations within neighborhoods should’ve evened out in a way where we could not predict racial densities in neighborhoods today based on HOLC grades from the 30s. However, we are still seeing that many neighborhoods are ____ by race so I wanted to investigate whether there was a relationship between HOLC grades in the 30s and the neighborhood demographics today, or whether the lack of diversity in neighborhood demographics today is unrelated to HOLC grades.
 
-## Milestone #2 - Project Proposal
+Data:
 
-Does the history of redlining in the 1930s in metropolitan areas have an impact on the racial composition of those same areas today (2020)? In this study I plan to examine to what extent HOLC grades during the redlining era have a legacy in terms of the racial composition of specific areas today. I hypothesize that there is a relationship between whether a metropolitan area had been redlined and their current racial composition. I expect that areas with higher HOLC grades during the redlining era will have a higher concentration of white people now, and that areas with lower HOLC grades will have a higher concentration of Black people now. The history of redlining is that homeowners associations would give certain neighborhoods rankings — A’s were most frequently given to affluent white neighborhoods, and D’s were most often assigned to neighborhoods with more Black people. These rankings had a large impact on housing prices and consequently many “better” neighborhoods were not accessible to Black families who were just beginning to have the ability to purchase their own house etc. I expect that the inability to break into these “better” neighborhoods with better resources and schools etc, contributed to the lack of upward mobility for Black families which confined them to the same areas/neighborhoods over time. My explanatory variable of interest would be the HOLC grade assigned to the measured metropolitan area during the period of 1935-1940. HOLC grades are on a A-D grading scale, with A’s being areas of better quality and D’s being areas of lesser quality. In my data set, each recorded metropolitan area has its corresponding HOLC grade. For example, one metropolitan area in Asheville, NC has an A but another area also in Asheville, NC has a D so I can tell that these neighboring areas in the same town were redlined. My outcome variables of interest would be the white population and Black population for those same metropolitan areas in 2020. Both variables are estimates of non-Hispanic white/Black populations within HOLC zones with a given holc_grade in a given metro_area and they are rounded to the nearest integer. My hypothesis would be supported by a pattern that showed higher 2020 white populations (and lower Black populations) in areas with higher HOLC grades (A’s and B’s), and higher 2020 Black populations (and lower white populations) in areas with lower HOLC grades (C’s and D’s). Conversely, my hypothesis would be disproved if the data showed lower 2020 white populations in areas with higher HOLC grades, and higher 2020 Black populations in areas with lower HOLC grades. It could also be that when comparing white vs. Black populations for higher HOLC grade areas or lower HOLC grade areas, we see that there is a 50-50 split, indicating that there is equal racial composition in those areas now.
+The data set “metro-grades.csv” contains 2020 population total estimates by race/ethnicity for combined zones of each redlining grade (from Home Owners' Loan Corporation [HOLC] maps originally drawn in 1935-40, downloaded from the Mapping Inequality project) within micro- and metropolitan areas.
 
+My explanatory/independent variable of interest is holc_grade which is the HOLC grade assigned to the measured metropolitan area during the period of 1935-1940. HOLC grades are measured on a A-D grading scale, with A’s being areas of better quality and D’s being areas of lesser quality. These grades were assigned in the 30s by the Home Owners’ Loan Corporation. In my data set, each recorded metropolitan area has its corresponding HOLC grade. For example, one metropolitan area in Asheville, NC has an A but another area also in Asheville, NC has a D so I can tell that these neighboring areas in the same town were redlined.
 
-## Milestone #3 - Visualization
+My outcome/dependent variables of interest is pct_black which is the percentage of total population within HOLC zones in 2020 that is Black. This is an estimate of non-Hispanic Black populations within HOLC zones with a given holc_grade in a given metro_area and they are rounded to the nearest integer. These measures of percents of population and race/ethnicity come from the 2020 U.S. decennial census, which is a governmental survey conducted in the U.S.. 
+
+This research design is a cross-sectional study since it is an observational study where we are comparing pct_black at one point in time (2020). The areas with high HOLC grade (A) are the control units and the areas with low HOLC grades (C/D) are the treatment units.
+
+The data set used in this project can be accessed here: https://github.com/fivethirtyeight/data/tree/master/redlining 
+
+Plot that summarizes the dependent variable:
+
 ```{r}
 library(tidyverse)
 redlining <- read_csv("data-master/redlining/metro-grades.csv")
 
+redlining <- redlining |>
+  mutate(pctblack_bin = case_when(pct_black <= 10 ~ "0-10%",
+                             pct_black > 10 & pct_black <= 20 ~ "10-20%",
+                             pct_black > 20 & pct_black <= 30 ~ "20-30%",
+                             pct_black < 30 & pct_black <= 40 ~ "30-40%",
+                             pct_black < 40 & pct_black <= 50 ~ "40-50%",
+                             pct_black < 50 & pct_black <= 60 ~ "50-60%",
+                             pct_black < 60 & pct_black <= 70 ~ "60-70%",
+                             pct_black < 70 & pct_black <= 80 ~ "70-80%",
+                             pct_black < 80 & pct_black <= 90 ~ "80-90%",
+                             pct_black > 90 ~ "90-100%"))
+redlining
 
-white_holc_plot <- redlining |>
-  ggplot(aes(x = holc_grade,
-             y = pct_white)) +
-  geom_boxplot() +
-  labs(x = "HOLC Grade",
-       y = "Percentage of Population that is White")
-white_holc_plot
+blackpop_plot <- ggplot(data=subset(redlining, !is.na(pctblack_bin)), aes(x=pctblack_bin)) +
+  geom_bar() +
+  labs(x = "Percent of Population in HOLC zones that is Black (2020)",
+       y = "Frequency",
+       title = "Distribution of pct_black variable")
 
+blackpop_plot
+
+```
+This barplot displays the outcome variable - "pct_black" which describes the percent of the population in HOLC zones that is Black. From this plot, we see that the percentages range from 0-90%, with no values between 90-100%. The distribution is right skewed, with a majority of values lying in the 0-10% bin. 
+
+Results:
+
+```{r}
 
 black_holc_plot <- redlining |>
   ggplot(aes(x = holc_grade,
              y = pct_black)) +
   geom_boxplot() +
   labs(x = "HOLC Grade",
-       y = "Percentage of Population that is Black")
+       y = "Percentage of Population that is Black",
+       title = "Percentage of Population that is Black Within HOLC grade Zones")
 
 black_holc_plot
-
-
-png("white_holc_plot.png")
-print(white_holc_plot)
-dev.off()
 
 png("black_holc_plot.png")
 print(black_holc_plot)
 dev.off()
 
+```
+Based on the barplot above, we see that the median percentage of population that is Black is highest in HOLC grade D zones. In D zones, the median is ~28% and in C zones, the median is ~20%, while the median in A-zones is ~5%. Based on this, we can see that a lower HOLC grade corresponds to a higher value for pct_black if we are looking at the median of the data. However, the range of pct_black is also much wider for D zones, stretching from 0-85%, while the range of pct_black for A zones is from 0-65%. The A zone range is skewed though because there are many outliers. The fourth quartile is at ~25% so without the outliers, the range for A zones would be 0-25%. 
+
+Based on the graph created above, we do see a relationship between redlining in the 1930s in metropolitan areas and the racial composition of those same areas today (2020). Neighborhoods with higher HOLC grades in the 30s were "meant for" white families, whereas lower HOLC grades were associated with poor Black families/families of color. When we look at the racial composition of those areas today, we see that the percentage of the population in that area that is Black still reflects similar patterns and skewed racial compositions.
+
+Multivariable Regression
+
+```{r}
+
+pop_redlined <- lm(pct_black ~ holc_grade + surr_area_black_pop,
+               data = redlining)
+pop_redlined
+
+library(modelsummary)
+modelsummary::modelsummary(pop_redlined,
+                           statistic = c("s.e. = {std.error}",
+                                         "p = {p.value}"),
+                           gof_map = c("nobs", "r.squared", "adj.r.squared"))
 
 
 ```
 
-## Milestone 4 - Analysis
-Research question: Does the history of redlining in the 1930s in metropolitan areas have an impact on the racial composition of those same areas today (2020)?
 
-Based on the graphs created above, we do see a relationship between redlining in the 1930s in metropolitan areas and the racial composition of those same areas today (2020). Neighborhoods with higher HOLC grades in the 30s were "meant for" white families, whereas lower HOLC grades were associated with poor Black families/families of color. When we look at the racial composition of those areas today, we see that the percentage of the population in that area still reflects skewed racial compositions.
+This regression table shows the relationship between HOLC grades and the percent of a HOLC grade zone that is Black in 2020. In this regression, HOLC grade A is considered to be the intercept, or the baseline of our analysis. From the table above, we see that the intercept is 8.130, which means that the percent of the population that is Black within an A grade zone is 8.13%. Next, we can interpret the holc_gradeB coefficient to mean that in a B grade zone, the percentage of the population that is Black increases by 7.724% compared to an A grade zone. Further, the holc_gradeC coefficient means that the percentage of the population that is Black in a C grade zone increases by 14.114% compared to an A grade zone, and the holc_gradeD coefficient means that the percentage of the population that is Black in a D grade zone increases by 22.556% compared to an A grade zone. Since the p-value for all of the above is less than 0.001, we can conclude that these results are statistically significant with an alpha level of 0.05 since 0.001 is less than 0.05. 
+
+During the time in which the HOLC grades were assigned, A grade areas were considered to be the areas with the most white people and the least Black people since that was considered “more desirable”. Looking at our regression results, we do see that a zone with a C or D grade (low HOLC grade) corresponds with a higher percentage of Black people in that area in 2020 compared to an area with an A grade. 
+
+The regression coefficient for the other predictor variable in the multivariable regression, surr_area_black_pop, is 0.000006, which means that for every 10,000 Black people within a surrounding area of a given HOLC zone, there is a .6% increase in percent of Black people in that given HOLC zone. 
+
+Since there was no randomized experiment conducted with treatment/control being randomly assigned to units, we cannot say that the coefficient represents a causal effect. Without the randomized experiment, we cannot claim causality even though there appears to be a relationship showing lower HOLC grades and higher pct_black in those areas. 
+
+Conclusion:
+
+In conclusion, though we cannot prove a causal relationship with this cross-sectional study, our regression results do appear to show a relationship between HOLC grades assigned in the 1930s and the racial composition of those same areas today (in 2020). More specifically, our results showed that areas with lower HOLC grades tend to have a higher concentration of Black people than areas with A grades. 
+
+These results support my hypothesis that areas with lower HOLC grades will have a higher percentage of Black people now compared to that of areas with an A grade. 
+
+There are limitations to this study, however, because there are many potential confounding variables that we have not accounted for. Since we are looking at population data for almost 100 years later (2020 vs 1930s), there are many newer/more relevant variables that could lead to certain areas continuing to have a higher concentration of Black people. For example, one thing that might have an impact on what areas have higher concentrations of Black people in 2020 could be regarding school districts. Areas with better school districts tend to have more rich, white people, which means that Black people might be contained in/restricted to certain areas based on income levels and school districts consequently. Another possible confounding variable could be political affiliation of certain areas. It is possible that Black people are concentrated in areas that are more liberal, meaning that left-leaning political ideology could be a reason for why that area might have a higher concentration of Black people. There are many more possible confounding variables because anything that could possibly result in an area having a higher concentration of Black people would be a confounding variable since we are technically comparing units at one point in time (2020).
+
+This study could be improved if we had data on the racial breakdowns (percentage wise) of the HOLC zones at the time of redlining itself. In that case, we would be able to more effectively analyze whether the removal of the HOLC grading system actually changed anything in terms of demographic distributions, or whether the grades had a lasting effect regardless of the fact that redlining was eliminated. Given the data available to us, we used HOLC grades as a variable that could have an effect on population density in 2020, but we were not able to do analysis over time even though that would have been beneficial given the fact that the HOLC grades were assigned a little less than a decade ago. 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
